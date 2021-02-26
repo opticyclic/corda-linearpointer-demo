@@ -23,4 +23,6 @@ data class MortgageState(val lender: Party,
                          override val linearId: UniqueIdentifier = UniqueIdentifier()) : LinearState {
 
     override val participants: List<AbstractParty> get() = listOf(lender)
+
+    fun withNewLender(newLender: Party) = copy(lender = newLender)
 }
