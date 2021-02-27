@@ -25,4 +25,6 @@ data class MBSState(val issuer: Party,
     override val participants: List<AbstractParty> get() = listOf(issuer)
 
     fun withNewMortgage(mortgageId: UniqueIdentifier) = copy(mortgages = mortgages.plus(LinearPointer(mortgageId, MortgageState::class.java)))
+
+    fun sellToInvestor(investor: Party) = copy(issuer = investor)
 }

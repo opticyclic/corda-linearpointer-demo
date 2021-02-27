@@ -17,6 +17,7 @@ class MBSContract : Contract {
     interface Commands : CommandData {
         class Create : TypeOnlyCommandData(), Commands
         class Add : TypeOnlyCommandData(), Commands
+        class Transfer : TypeOnlyCommandData(), Commands
     }
 
     override fun verify(tx: LedgerTransaction) {
@@ -26,6 +27,7 @@ class MBSContract : Contract {
         when (command.value) {
             is Commands.Create -> verifyCreate(tx, signers)
             is Commands.Add -> verifyAdd(tx, signers)
+            is Commands.Transfer -> verifyTransfer(tx, signers)
             else -> throw IllegalArgumentException("Unrecognised command.")
         }
     }
@@ -50,6 +52,17 @@ class MBSContract : Contract {
         val out = tx.outputsOfType<MBSState>().single()
         "The issuer must be a signer." using (signers.containsAll(out.participants.map { it.owningKey }))
         "Only the issuer can be a signer." using (signers.size == 1)
+    }
+
+    private fun verifyTransfer(tx: LedgerTransaction, signers: Set<PublicKey>) = requireThat {
+        //Generic constraints around the transaction.
+        "A transfer should only consume one input state: " + tx.inputs.size using (tx.inputs.size == 1)
+        "An transfer should only create one output state: " + tx.outputs.size using (tx.outputs.size == 1)
+
+        //Check that there has been a transfer of ownership
+        val input = tx.inputsOfType<MBSState>().single()
+        val output = tx.outputsOfType<MBSState>().single()
+        "The issuer must change in order to be a transfer." using (input.issuer != output.issuer)
     }
 
 }
