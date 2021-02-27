@@ -16,6 +16,7 @@ class MBSContract : Contract {
 
     interface Commands : CommandData {
         class Create : TypeOnlyCommandData(), Commands
+        class Add : TypeOnlyCommandData(), Commands
     }
 
     override fun verify(tx: LedgerTransaction) {
@@ -24,6 +25,7 @@ class MBSContract : Contract {
 
         when (command.value) {
             is Commands.Create -> verifyCreate(tx, signers)
+            is Commands.Add -> verifyAdd(tx, signers)
             else -> throw IllegalArgumentException("Unrecognised command.")
         }
     }
@@ -32,6 +34,17 @@ class MBSContract : Contract {
         //Generic constraints around the transaction.
         "No inputs should be consumed when issuing an MBS." using (tx.inputs.isEmpty())
         "Only one output state should be created." using (tx.outputs.size == 1)
+
+        //MBS specific constraints.
+        val out = tx.outputsOfType<MBSState>().single()
+        "The issuer must be a signer." using (signers.containsAll(out.participants.map { it.owningKey }))
+        "Only the issuer can be a signer." using (signers.size == 1)
+    }
+
+    private fun verifyAdd(tx: LedgerTransaction, signers: Set<PublicKey>) = requireThat {
+        //Generic constraints around the transaction.
+        "Only one input should be consumed when adding a mortgage to an MBS: " + tx.inputs using (tx.inputs.size == 1)
+        "Only one output state should be created: " + tx.outputs using (tx.outputs.size == 1)
 
         //MBS specific constraints.
         val out = tx.outputsOfType<MBSState>().single()
