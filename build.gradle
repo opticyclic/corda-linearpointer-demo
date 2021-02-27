@@ -113,4 +113,12 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['jar']) {
       adminAddress("localhost:10012")
     }
   }
+  node {
+    name "Motus Corp,L=London,C=GB"
+    p2pPort 10013
+    rpcSettings {
+      address("localhost:10014")
+      adminAddress("localhost:10015")
+    }
+  }
 }
