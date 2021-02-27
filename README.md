@@ -33,8 +33,21 @@ The purpose of the code is to demonstrate Linear Pointers, so it skims over seve
 * Investment Bank adds the mortgages to the MBS using Linear Pointers
 * Investment Bank sells the MBS to an Investor
 
-The mortgages are added to the MBS using Linear Pointers which means that the MBS state can be updated without modifying the mortgage states.
+The mortgages are added to the MBS using Linear Pointers which means that the MBS state can be updated without modifying
+the mortgage states.
 
 This also means that the mortgages can be updated without the MBS state being modified.
 
-The Investor will be able to see the MBS but won't be able to see the detail of the mortgages backing it as they won't be able to resolve the Linear Pointers.  
+The Investor will be able to see the MBS but won't be able to see the detail of the mortgages backing it as they won't
+be able to resolve the Linear Pointers.
+
+The flow that uses the `LinearPointer` is `AddToMBSFlow`.
+
+The `TransferMBSFlow` should demonstrate the fact that the Investor can't access the mortgages as they are
+LinearPointers and haven't been transferred.
+
+The end-to-end demonstration is in the test
+class `workflows/src/test/kotlin/com/github/opticyclic/corda/demo/linearpointers/flows/EndToEndTest.kt`
+
+The build.gradle contains all the necessary nodes, so you can run `./gradlew deployNodes` and run the flows from the
+shell if you would like.
