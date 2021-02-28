@@ -49,5 +49,11 @@ LinearPointers and haven't been transferred.
 The end-to-end demonstration is in the test
 class `workflows/src/test/kotlin/com/github/opticyclic/corda/demo/linearpointers/flows/EndToEndTest.kt`
 
+**NB:**
+
+- The EndToEnd test currently fails due to this Corda bug: https://github.com/corda/corda/issues/6883
+- When running all the tests together with `./gradlew test` you will get a failure due to this Corda
+  bug: https://github.com/corda/corda/issues/6884
+
 The build.gradle contains all the necessary nodes, so you can run `./gradlew deployNodes` and run the flows from the
 shell if you would like.
